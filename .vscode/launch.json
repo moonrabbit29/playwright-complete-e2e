@@ -1,0 +1,19 @@
+{
+    "configurations": [
+      {
+        "name": "Debug playwright tests",
+        "request": "launch",
+        "runtimeArgs": [
+          "playwright",
+          "test",
+          "-g",
+          "@debug"
+        ],
+        "console": "internalConsole",
+        "internalConsoleOptions": "openOnSessionStart",
+        "runtimeExecutable": "npx",
+        "skipFiles": ["<node_internals>/**"],
+        "type": "node"
+      }
+    ]
+  }
