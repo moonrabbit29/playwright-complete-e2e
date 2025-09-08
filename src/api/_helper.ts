@@ -1,4 +1,4 @@
-import { ajv, formatAjvErrors } from "@shared/validator";
+import { ajv, formatAjvErrors } from "utils/validator";
 import { APIResponse, expect } from "@playwright/test";
 import type { FromSchema, JSONSchema } from "json-schema-to-ts";
 

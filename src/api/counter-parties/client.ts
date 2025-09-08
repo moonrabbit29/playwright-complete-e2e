@@ -1,7 +1,7 @@
 import { APIRequestContext } from "@playwright/test";
-import { CounterpartyListSchema,CounterpartyList } from "integration/api/counter-parties/schema/counterparty.schema";
+import { CounterpartyListSchema,CounterpartyList } from "api/counter-parties/schema/counterparty.schema";
 
-import {compileSchema} from 'integration/api/_helper'
+import {compileSchema} from '@api/_helper'
 
 //pre compile schema
 const parseCounterparty = compileSchema<CounterpartyList>(CounterpartyListSchema);

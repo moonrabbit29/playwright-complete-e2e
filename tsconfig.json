@@ -11,9 +11,8 @@
     "baseUrl": "./src",
     "paths": {
       "@shared/*": ["shared/*"],
-      "@api/*": ["features/api/*"],
-      "@ui/*": ["features/ui/*"],
-      "@e2e/": ["e2e"]
+      "@api/*": ["api/*"],
+      "@ui/*": ["ui/*"]
     }
   },
   "include": ["src"],

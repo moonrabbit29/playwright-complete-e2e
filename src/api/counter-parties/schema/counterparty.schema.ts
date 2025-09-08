@@ -1,4 +1,4 @@
-import {InferFromSchema} from 'integration/api/_helper'
+import {InferFromSchema} from '@api/_helper'
 
 export const CounterpartySchema = {
   type: 'object',

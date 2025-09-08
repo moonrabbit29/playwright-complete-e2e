@@ -13,8 +13,17 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'api',
-      testMatch: ['**/*.api.spec.ts'],
+      name: 'api:contract',
+      testMatch: ['api/**/*.contract.spec.ts'],
+      use: {
+        trace: 'off',
+        screenshot: 'off',
+        video: 'off',
+      },
+    },
+    {
+      name: 'api:integration',
+      testMatch: ['api/integration/**/*.api.spec.ts'],
       use: {
         trace: 'off',
         screenshot: 'off',
