@@ -1,4 +1,4 @@
-import { setupTest } from "../../setupTest";
+import { setupTest } from "../../../setupTest";
 import { FlightSearchPage } from "./pages/FlightSearchPage";
 import {test as base } from "@playwright/test"
 //import {SearcHApi}
