@@ -1,49 +1,59 @@
 // playwright.config.ts
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  testDir: 'src',
+  testDir: "src",
   fullyParallel: true,
-  reporter: [['html', { open: 'never' }], ['list']],
+  reporter: [["html", { open: "never" }], ["list"]],
   use: {
-    baseURL: process.env.BASE_URL ?? 'http://localhost:3000/',
-    trace: 'off',
-    screenshot: 'only-on-failure',
-    video: 'off',
+    trace: "off",
+    screenshot: "only-on-failure",
+    video: "off",
   },
   projects: [
     {
-      name: 'api:contract',
-      testMatch: ['api/**/*.contract.spec.ts'],
+      name: "api:contract",
+      testMatch: ["api/**/*.contract.spec.ts"],
       use: {
-        trace: 'off',
-        screenshot: 'off',
-        video: 'off',
+        trace: "off",
+        screenshot: "off",
+        video: "off",
+        baseURL: process.env.BASE_URL ?? "http://localhost:3000/",
       },
     },
     {
-      name: 'api:integration',
-      testMatch: ['api/integration/**/*.api.spec.ts'],
+      name: "api:integration",
+      testMatch: ["api/integration/**/*.api.spec.ts"],
       use: {
-        trace: 'off',
-        screenshot: 'off',
-        video: 'off',
+        trace: "off",
+        screenshot: "off",
+        video: "off",
+        baseURL: process.env.BASE_URL ?? "http://localhost:3000/",
       },
     },
     {
-      name: 'chromium',
-      testMatch: ['**/*.ui.spec.ts', '**/*.spec.ts'], // kalau mau gabung UI biasa
-      use: { ...devices['Desktop Chrome'] },
+      name: "ui:chromium",
+      testMatch: ["**/*.ui.spec.ts", "**/*.spec.ts"], // kalau mau gabung UI biasa
+      use: {
+        ...devices["Desktop Chrome"],
+        baseURL: process.env.APP_URL ?? "https://www.bookcabin.com",
+      },
     },
     {
-      name: 'firefox',
-      testMatch: ['**/*.ui.spec.ts', '**/*.spec.ts'],
-      use: { ...devices['Desktop Firefox'] },
+      name: "ui:firefox",
+      testMatch: ["**/*.ui.spec.ts", "**/*.spec.ts"],
+      use: {
+        ...devices["Desktop Firefox"],
+        baseURL: process.env.APP_URL ?? "https://www.bookcabin.com",
+      },
     },
     {
-      name: 'webkit',
-      testMatch: ['**/*.ui.spec.ts', '**/*.spec.ts'],
-      use: { ...devices['Desktop Safari'] },
+      name: "ui:webkit",
+      testMatch: ["**/*.ui.spec.ts", "**/*.spec.ts"],
+      use: {
+        ...devices["Desktop Safari"],
+        baseURL: process.env.APP_URL ?? "https://www.bookcabin.com",
+      },
     },
   ],
 });

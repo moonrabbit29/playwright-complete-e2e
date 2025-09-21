@@ -1,4 +1,4 @@
-import { apiBase, expect } from "utils/api-context";
+import { apiBase, expect } from "@api/shared/api-context";
 import { CounterpartiesClient } from "api/counter-parties/client";
 
 export const test = apiBase.extend<{ counterparties: CounterpartiesClient }>({

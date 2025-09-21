@@ -1,4 +1,4 @@
-import {InferFromSchema} from '@api/_helper'
+import {InferFromSchema} from '@api/shared/schema-validator'
 
 export const CounterpartySchema = {
   type: 'object',
