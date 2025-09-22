@@ -1,0 +1,96 @@
+import {
+  test as base,
+  APIRequestContext,
+  APIResponse,
+  Request,
+} from "@playwright/test";
+
+import {
+  truncate,
+  normalizeHeaders,
+} from "../helper/text-helper";
+import { createLogger } from "@shared/logger";
+import { nil } from "ajv";
+
+export const apiBase = base.extend<{ api: APIRequestContext; saveLog: void }>({
+  api: async ({ playwright, baseURL }, use) => {
+    const ctx = await playwright.request.newContext({
+      baseURL,
+      extraHTTPHeaders: { "Content-Type": "application/json" },
+    });
+
+    await use(ctx);
+    await ctx.dispose();
+  },
+
+  saveLog: [
+    async ({ api }, use, testInfo) => {
+      const enabled = /^1|true|yes$/i.test(process.env.API_LOG ?? "");
+      if (!enabled) {
+        await use();
+        return;
+      }
+      const origFetch = api.fetch.bind(api);
+      const logTag = `[W${testInfo.workerIndex}] API:${testInfo.title}`;
+      const log = createLogger(logTag);
+      
+
+      api.fetch = async (
+        url: string | Request,
+        init: any
+      ): Promise<APIResponse> => {
+        const start = Date.now();
+        const method = init?.method ?? "GET";
+        const fullUrl = typeof url === "string" ? url : url.toString();
+        const headers = normalizeHeaders(init?.headers);
+
+        if (Object.keys(headers).length != 0) {
+          log.info(`${logTag} [API -> ] ${method} ${fullUrl} headers=${JSON.stringify(headers)}`);
+        } else {
+          log.info(`${logTag} [API -> ] ${method} ${fullUrl}`);
+        }
+        if (init?.data !== undefined) {
+          const requestBody =
+            typeof init.data === "string"
+              ? init.data
+              : JSON.stringify(init.data);
+          log.debug(`body=${requestBody}`);
+        }
+
+        try {
+          const res = await origFetch(url, init);
+          if (/^1|true|yes$/i.test(process.env.API_LOG_BODY ?? "")) {
+            try {
+              const clonedText = await res.text();
+              log.debug(
+                `[API ←] ${res.status()} ${method} ${fullUrl} (${
+                  Date.now() - start
+                }ms) body=${truncate(clonedText)}`
+              );
+            } catch {
+              log.debug(
+                `[API ←] ${res.status()} ${method} ${fullUrl} (${
+                  Date.now() - start
+                }ms) [body unreadable]`
+              );
+            }
+          } else {
+            log.debug(
+              `[API ←] ${res.status()} ${method} ${fullUrl} (${
+                Date.now() - start
+              }ms)`
+            );
+          }
+          return res;
+        } catch (e: any) {
+          log.error(`[API ✖] ${method} ${fullUrl} error: ${e?.message || e}`);
+          throw e;
+        }
+      };
+      await use();
+    },
+    { auto: true },
+  ],
+});
+
+export { expect } from "@playwright/test";

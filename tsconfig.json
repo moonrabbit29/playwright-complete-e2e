@@ -7,7 +7,6 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
 
-    // ini penting 👇
     "baseUrl": "./src",
     "paths": {
       "@shared/*": ["shared/*"],

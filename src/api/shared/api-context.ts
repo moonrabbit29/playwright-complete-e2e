@@ -6,7 +6,7 @@ import {
   Request,
 } from "@playwright/test";
 
-import { tryStringify,truncate,normalizeHeaders } from "./text-helper";
+import { tryStringify,truncate,normalizeHeaders } from "@api/helper/text-helper";
 
 
 export const apiBase = base.extend<{ api: APIRequestContext; saveLog: void }>({

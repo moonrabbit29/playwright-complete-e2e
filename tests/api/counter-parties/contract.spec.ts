@@ -1,5 +1,5 @@
-import { apiBase, expect } from "@api/shared/api-context";
-import { CounterpartiesClient } from "api/counter-parties/client";
+import { apiBase, expect } from "@api/fixture/api-fixture";
+import { CounterpartiesClient } from "./client";
 
 export const test = apiBase.extend<{ counterparties: CounterpartiesClient }>({
   counterparties: async ({ api }, use) => {
