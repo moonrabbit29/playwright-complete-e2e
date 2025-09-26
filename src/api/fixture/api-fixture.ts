@@ -10,7 +10,6 @@ import {
   normalizeHeaders,
 } from "../helper/text-helper";
 import { createLogger } from "@shared/logger";
-import { nil } from "ajv";
 
 export const apiBase = base.extend<{ api: APIRequestContext; saveLog: void }>({
   api: async ({ playwright, baseURL }, use) => {
@@ -32,7 +31,8 @@ export const apiBase = base.extend<{ api: APIRequestContext; saveLog: void }>({
       }
       const origFetch = api.fetch.bind(api);
       const logTag = `[W${testInfo.workerIndex}] API:${testInfo.title}`;
-      const log = createLogger(logTag);
+      const logs:string[] = [];
+      const log = createLogger(logTag,undefined,logs);
       
 
       api.fetch = async (
@@ -88,6 +88,8 @@ export const apiBase = base.extend<{ api: APIRequestContext; saveLog: void }>({
         }
       };
       await use();
+      await testInfo.attach('api.log', { body: logs.join('\n'), contentType: 'text/plain' });
+      (api as any).fetch = origFetch;
     },
     { auto: true },
   ],

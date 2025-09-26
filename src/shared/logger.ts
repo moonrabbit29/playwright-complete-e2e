@@ -1,22 +1,29 @@
 // Simple namespaced logger with LogSeverity control via env LOG_LogSeverity
-export type LogSeverity = 'silent' | 'error' | 'warn' | 'info' | 'debug' | 'all';
-const order: Record<LogSeverity, number> = { silent: 5, error: 4, warn: 3, info: 2, debug: 1, all: 0 };
+export type Level = 'silent' | 'error' | 'warn' | 'info' | 'debug' | 'all';
+const order: Record<Level, number> = { silent: 5, error: 4, warn: 3, info: 2, debug: 1, all: 0 };
 
-export function getLogLogSeverity(): LogSeverity {
+export function getLogLogSeverity(): Level {
   const raw = (process.env.LOG_LogSeverity ?? 'info').toLowerCase();
-  return (['silent','error','warn','info','debug', 'all'] as LogSeverity[]).includes(raw as LogSeverity) ? (raw as LogSeverity) : 'info';
+  return (['silent','error','warn','info','debug', 'all'] as Level[]).includes(raw as Level) ? (raw as Level) : 'info';
 }
 
-export function createLogger(ns: string, LogSeverity: LogSeverity = getLogLogSeverity()) {
-  const should = (lvl: LogSeverity) => order[lvl] >= order[LogSeverity];
+export function createLogger(ns: string, level: Level = getLogLogSeverity(),sink?: string[]) {
+  const should = (lvl: Level) => order[lvl] >= order[level];
   const ts = () => new Date().toISOString();
   const tag = (lvl: string) => `${ts()} [${lvl}] [${ns}]`;
+ const write = (lvl : Level, out: (...args: any[]) => void, ...a: any[]) => {
+    if (!should(lvl)) return;
+    const line = `${tag(lvl.toUpperCase())} ${a.join(' ')}`;
+    out(line);
+    if (sink) sink.push(line); // optional, buat attachment report
+  };
+
 
   return {
-    setLogSeverity(l: LogSeverity) { LogSeverity = l; },
-    debug: (...a: any[]) => { if (should('debug')) console.log(tag('DBG'), ...a); },
-    info : (...a: any[]) => { if (should('info'))  console.log(tag('INF'), ...a); },
-    warn : (...a: any[]) => { if (should('warn'))  console.warn(tag('WRN'), ...a); },
-    error: (...a: any[]) => { if (should('error')) console.error(tag('ERR'), ...a); },
+    setLevel(l: Level) { level = l; },
+    debug: (...a: any[]) => write('debug', console.log, ...a),
+    info : (...a: any[]) => write('info',  console.log, ...a),
+    warn : (...a: any[]) => write('warn',  console.warn, ...a),
+    error: (...a: any[]) => write('error', console.error, ...a),
   };
 }
