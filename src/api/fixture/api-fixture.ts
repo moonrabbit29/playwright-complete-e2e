@@ -5,10 +5,7 @@ import {
   Request,
 } from "@playwright/test";
 
-import {
-  truncate,
-  normalizeHeaders,
-} from "../helper/text-helper";
+import { truncate, normalizeHeaders } from "../helper/text-helper";
 import { createLogger } from "@shared/logger";
 
 export const apiBase = base.extend<{ api: APIRequestContext; saveLog: void }>({
@@ -31,9 +28,8 @@ export const apiBase = base.extend<{ api: APIRequestContext; saveLog: void }>({
       }
       const origFetch = api.fetch.bind(api);
       const logTag = `[W${testInfo.workerIndex}] API:${testInfo.title}`;
-      const logs:string[] = [];
-      const log = createLogger(logTag,undefined,logs);
-      
+      const logs: string[] = [];
+      const log = createLogger(logTag, undefined, logs);
 
       api.fetch = async (
         url: string | Request,
@@ -45,7 +41,11 @@ export const apiBase = base.extend<{ api: APIRequestContext; saveLog: void }>({
         const headers = normalizeHeaders(init?.headers);
 
         if (Object.keys(headers).length != 0) {
-          log.info(`${logTag} [API -> ] ${method} ${fullUrl} headers=${JSON.stringify(headers)}`);
+          log.info(
+            `${logTag} [API -> ] ${method} ${fullUrl} headers=${JSON.stringify(
+              headers
+            )}`
+          );
         } else {
           log.info(`${logTag} [API -> ] ${method} ${fullUrl}`);
         }
@@ -56,29 +56,38 @@ export const apiBase = base.extend<{ api: APIRequestContext; saveLog: void }>({
               : JSON.stringify(init.data);
           log.debug(`body=${requestBody}`);
         }
-
+        const showLogBody = process.env.API_LOG_BODY ?? "";
         try {
           const res = await origFetch(url, init);
-          if (/^1|true|yes$/i.test(process.env.API_LOG_BODY ?? "")) {
-            try {
-              const clonedText = await res.text();
-              log.debug(
-                `[API ←] ${res.status()} ${method} ${fullUrl} (${
-                  Date.now() - start
-                }ms) body=${truncate(clonedText)}`
-              );
-            } catch {
-              log.debug(
-                `[API ←] ${res.status()} ${method} ${fullUrl} (${
-                  Date.now() - start
-                }ms) [body unreadable]`
-              );
+          try {
+            const clonedText = await res.text();
+            switch (showLogBody) {
+              case "full":
+                log.debug(
+                  `[API ←] ${res.status()} ${method} ${fullUrl} (${
+                    Date.now() - start
+                  }ms) body=${clonedText}`
+                );
+                break;
+              case "truncate":
+                log.debug(
+                  `[API ←] ${res.status()} ${method} ${fullUrl} (${
+                    Date.now() - start
+                  }ms) body=${truncate(clonedText)}`
+                );
+                break;
+              default:
+                log.debug(
+                  `[API ←] ${res.status()} ${method} ${fullUrl} (${
+                    Date.now() - start
+                  }ms)`
+                );
             }
-          } else {
+          } catch (e: any) {
             log.debug(
               `[API ←] ${res.status()} ${method} ${fullUrl} (${
                 Date.now() - start
-              }ms)`
+              }ms) [body unreadable]`
             );
           }
           return res;
@@ -88,7 +97,7 @@ export const apiBase = base.extend<{ api: APIRequestContext; saveLog: void }>({
         }
       };
       await use();
-      await testInfo.attach('api.log', { body: logs.join('\n'), contentType: 'text/plain' });
+      //await testInfo.attach('api.log', { body: logs.join('\n'), contentType: 'text/plain' });
       (api as any).fetch = origFetch;
     },
     { auto: true },

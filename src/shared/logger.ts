@@ -13,9 +13,9 @@ export function createLogger(ns: string, level: Level = getLogLogSeverity(),sink
   const tag = (lvl: string) => `${ts()} [${lvl}] [${ns}]`;
  const write = (lvl : Level, out: (...args: any[]) => void, ...a: any[]) => {
     if (!should(lvl)) return;
-    const line = `${tag(lvl.toUpperCase())} ${a.join(' ')}`;
+    const line = `${tag(lvl.toUpperCase())} ${a.join(' ')} \n`;
     out(line);
-    if (sink) sink.push(line); // optional, buat attachment report
+    if (sink) sink.push(line);
   };
 
 
