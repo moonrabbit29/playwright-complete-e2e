@@ -1,18 +1,30 @@
 // playwright.config.ts
 import { defineConfig, devices } from "@playwright/test";
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
+
+function getTraceMode(){
+  const x = process.env.TRACER_MODE
+  if (x === 'on') return 'on';
+  if (x === 'on-first-retry') return 'on-first-retry';
+  if (x === 'retain-on-failure') return 'retain-on-failure';
+  return 'off';
+}
+
+function getScreenShotMode(){
+  // "on" | "on-first-retry" | "off" | "retain-on-failure"
+  const x = process.env.SCREEN_SHOT_MODE
+  if (x === 'on') return 'on';
+  if (x === 'only-on-failure') return 'only-on-failure';
+  if(x==='on-first-failure') return 'on-first-failure'
+  return 'off';
+}
 
 export default defineConfig({
   testDir: "tests",
   fullyParallel: true,
   reporter: [["html", { open: "never" }], ["list"]],
-  use: {
-    trace: "on",
-    screenshot: "only-on-failure",
-    video: "off",
-  },
   projects: [
     {
       name: "api:contract",
@@ -26,10 +38,18 @@ export default defineConfig({
     },
     {
       name: "ui:chromium",
-      testMatch: ["**/*.ui.spec.ts", "**/*.spec.ts"], // kalau mau gabung UI biasa
+      testMatch: ["**/web/*.spec.ts"], 
       use: {
         ...devices["Desktop Chrome"],
         baseURL: process.env.APP_URL ?? "https://www.bookcabin.com",
+        trace: getTraceMode(),
+        screenshot: getScreenShotMode(),
+        video: "off",
+        headless : process.env.IS_HEADLESS === "true" ? true : false,
+        viewport: {
+          width: +(process.env.VIEWPORT_WIDTH ?? 1280),
+          height: +(process.env.VIEWPORT_HEIGHT ?? 800),
+        },
       },
     },
     {
@@ -38,6 +58,14 @@ export default defineConfig({
       use: {
         ...devices["Desktop Firefox"],
         baseURL: process.env.APP_URL ?? "https://www.bookcabin.com",
+        trace: getTraceMode(),
+        screenshot: getScreenShotMode(),
+        video: "off",
+        headless : process.env.IS_HEADLESS === "true" ? true : false,
+        viewport: {
+          width: +(process.env.VIEWPORT_WIDTH ?? 1280),
+          height: +(process.env.VIEWPORT_HEIGHT ?? 800),
+        },
       },
     },
     {
@@ -45,7 +73,15 @@ export default defineConfig({
       testMatch: ["**/*.ui.spec.ts", "**/*.spec.ts"],
       use: {
         ...devices["Desktop Safari"],
-        baseURL: process.env.APP_URL ?? "https://www.bookcabin.com",
+         baseURL: process.env.APP_URL ?? "https://www.bookcabin.com",
+        trace: getTraceMode(),
+        screenshot: getScreenShotMode(),
+        headless : process.env.IS_HEADLESS === "true" ? true : false,
+        video: "off",
+        viewport: {
+          width: +(process.env.VIEWPORT_WIDTH ?? 1280),
+          height: +(process.env.VIEWPORT_HEIGHT ?? 800),
+        },
       },
     },
   ],

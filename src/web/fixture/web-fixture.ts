@@ -6,16 +6,18 @@ import {
   Logger,
   ConsoleMessage,
   Request,
+  expect,
 } from "@playwright/test";
-import { createLogger } from "@shared/logger";
+import { createLogger, TestLogger } from "@shared/logger";
 
 type LogSeverity = "verbose" | "info" | "warning" | "error";
 
-export const pageBase = base.extend<{
+export const webBase = base.extend<{
   context: BrowserContext;
   page: BrowserContext;
   launchOptions: LaunchOptions;
   saveLogs: void;
+  logger : TestLogger
 }>({
   context: async ({ browser }, use) => {
     const context = await browser.newContext({
@@ -43,10 +45,21 @@ export const pageBase = base.extend<{
     await use({ logger });
   },
 
+  logger : async({},use,testInfo) =>{
+      const logTag = `[W${testInfo.workerIndex}] API:${testInfo.title}`;
+      const log = createLogger(logTag);
+      use(log);
+  },
+
   saveLogs: [
     async ({ page }, use, testInfo) => {
-      const logTag = `[W${testInfo.workerIndex}] WEB:${testInfo.title}`;
+      const logTag = `[W${testInfo.workerIndex}] API:${testInfo.title}`;
       const log = createLogger(logTag);
+      const enabled = /^1|true|yes$/i.test(process.env.WEB_LOG ?? "");
+      if (!enabled) {
+        await use();
+        return;
+      }
 
       const onLoad = (p: Page, label: string) =>
         log.info(`${label}: ${p.url()}`);
@@ -69,3 +82,5 @@ export const pageBase = base.extend<{
     { auto: true },
   ],
 });
+
+export {expect}

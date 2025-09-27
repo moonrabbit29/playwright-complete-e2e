@@ -1,7 +1,7 @@
 import { APIRequestContext } from "@playwright/test";
 import { CounterpartyListSchema,CounterpartyList } from "./schema/counterparty.schema";
 
-import {compileSchema} from '@api/helper/schema-validator'
+import {compileSchema} from 'src/api/helper/schema-validator'
 
 //pre compile schema
 const parseCounterparty = compileSchema<CounterpartyList>(CounterpartyListSchema);

@@ -1,4 +1,4 @@
-import { apiBase, expect } from "@api/fixture/api-fixture";
+import { apiBase, expect } from "src/api/fixture/api-fixture";
 import { CounterpartiesClient } from "./client";
 
 export const test = apiBase.extend<{ counterparties: CounterpartiesClient }>({

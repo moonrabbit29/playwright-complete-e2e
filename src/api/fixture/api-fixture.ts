@@ -28,8 +28,7 @@ export const apiBase = base.extend<{ api: APIRequestContext; saveLog: void }>({
       }
       const origFetch = api.fetch.bind(api);
       const logTag = `[W${testInfo.workerIndex}] API:${testInfo.title}`;
-      const logs: string[] = [];
-      const log = createLogger(logTag, undefined, logs);
+      const log = createLogger(logTag);
 
       api.fetch = async (
         url: string | Request,
@@ -42,12 +41,12 @@ export const apiBase = base.extend<{ api: APIRequestContext; saveLog: void }>({
 
         if (Object.keys(headers).length != 0) {
           log.info(
-            `${logTag} [API -> ] ${method} ${fullUrl} headers=${JSON.stringify(
+            `[API -> ] ${method} ${fullUrl} headers=${JSON.stringify(
               headers
             )}`
           );
         } else {
-          log.info(`${logTag} [API -> ] ${method} ${fullUrl}`);
+          log.info(`[API -> ] ${method} ${fullUrl}`);
         }
         if (init?.data !== undefined) {
           const requestBody =

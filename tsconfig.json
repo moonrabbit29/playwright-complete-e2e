@@ -7,11 +7,9 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
 
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "paths": {
-      "@shared/*": ["shared/*"],
-      "@api/*": ["api/*"],
-      "@ui/*": ["ui/*"]
+      "@shared/*": ["src/shared/*"]
     }
   },
   "include": ["src", "tests"],
