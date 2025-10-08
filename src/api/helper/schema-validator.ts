@@ -1,6 +1,5 @@
 import { APIResponse, expect } from "@playwright/test";
-import type { FromSchema, JSONSchema } from "json-schema-to-ts";
-import Ajv, { DefinedError } from "ajv";
+import Ajv from "ajv";
 import addFormats from "ajv-formats";
 
 export const ajv = new Ajv({ allErrors: true, strict: false });
@@ -34,4 +33,3 @@ export function compileSchema<s>(schema: unknown) {
     return body as s;
   };
 }
-export type InferFromSchema<S extends JSONSchema> = FromSchema<S>;

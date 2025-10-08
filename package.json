@@ -11,6 +11,8 @@
     "@eslint/js": "^9.26.0",
     "@playwright/test": "^1.52.0",
     "@types/node": "^22.14.1",
+    "appium-inspector-plugin": "^2025.8.2",
+    "appium-uiautomator2-driver": "^5.0.4",
     "eslint": "^9.26.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.0"
@@ -21,9 +23,10 @@
     "appium": "^3.0.2",
     "dotenv": "^16.5.0",
     "json-schema-to-ts": "^3.1.1",
+    "sample-apps": "^1.2.1",
     "webdriverio": "^9.20.0"
   },
-   "overrides": {
+  "overrides": {
     "axios": "^1.7.2"
   }
 }

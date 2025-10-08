@@ -1,5 +1,3 @@
-import {InferFromSchema} from '@api/helper/schema-validator'
-
 export const CounterpartySchema = {
   type: 'object',
   properties: {
@@ -22,7 +20,3 @@ export const CounterpartyListSchema = {
   type: 'array',
   items: CounterpartySchema,
 } as const;
-
-
-export type Counterparty = InferFromSchema<typeof CounterpartySchema>;
-export type CounterpartyList = InferFromSchema<typeof CounterpartyListSchema>;

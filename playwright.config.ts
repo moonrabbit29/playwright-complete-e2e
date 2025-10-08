@@ -53,36 +53,10 @@ export default defineConfig({
       },
     },
     {
-      name: "ui:firefox",
-      testMatch: ["**/*.ui.spec.ts", "**/*.spec.ts"],
-      use: {
-        ...devices["Desktop Firefox"],
-        baseURL: process.env.APP_URL ?? "https://www.bookcabin.com",
-        trace: getTraceMode(),
-        screenshot: getScreenShotMode(),
-        video: "off",
-        headless : process.env.IS_HEADLESS === "true" ? true : false,
-        viewport: {
-          width: +(process.env.VIEWPORT_WIDTH ?? 1280),
-          height: +(process.env.VIEWPORT_HEIGHT ?? 800),
-        },
-      },
-    },
-    {
-      name: "ui:webkit",
-      testMatch: ["**/*.ui.spec.ts", "**/*.spec.ts"],
-      use: {
-        ...devices["Desktop Safari"],
-         baseURL: process.env.APP_URL ?? "https://www.bookcabin.com",
-        trace: getTraceMode(),
-        screenshot: getScreenShotMode(),
-        headless : process.env.IS_HEADLESS === "true" ? true : false,
-        video: "off",
-        viewport: {
-          width: +(process.env.VIEWPORT_WIDTH ?? 1280),
-          height: +(process.env.VIEWPORT_HEIGHT ?? 800),
-        },
-      },
+      name: 'mobile:android',
+      testMatch: ['**/appium/*.spec.ts'],
+      fullyParallel: false,
+      use: { trace: 'off', screenshot: 'off', video: 'off' },
     },
   ],
 });
